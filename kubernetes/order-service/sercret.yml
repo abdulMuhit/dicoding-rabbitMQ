@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: proyek-akhir-rabbitmq-secret
+  namespace: abdul-dicoding
+type: Opaque
+data:
+  password: Z3Vlc3Q=  # Ini adalah base64 dari password RabbitMQ
+  user: Z3Vlc3Q=      # Ini adalah base64 dari username RabbitMQ

@@ -1,0 +1,46 @@
+version: "3.2"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.11-management
+    container_name: 'rabbitmq_container'
+    ports:
+      - "5672:5672"  # RabbitMQ default port
+      - "15672:15672"  # RabbitMQ management UI port
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - rabbitmq_network
+
+  order:
+    image: order-service:latest
+    container_name: 'order_container'
+    ports:
+      - '3000:3000'
+    depends_on:
+      - rabbitmq
+    environment:
+      - AMQP_URL=amqp://guest:guest@rabbitmq:5672
+      - PORT=3000
+    restart: on-failure
+    networks:
+      - rabbitmq_network
+
+  shipping:
+    image: shipping-service:latest
+    container_name: 'shipping_container'
+    ports:
+      - '3001:3001'
+    depends_on:
+      - rabbitmq
+    environment:
+      - AMQP_URL=amqp://guest:guest@rabbitmq:5672
+      - PORT=3001
+    restart: on-failure
+    networks:
+      - rabbitmq_network
+
+networks:
+  rabbitmq_network:
+    driver: bridge
